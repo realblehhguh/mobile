@@ -49,6 +49,11 @@ on:
         type: boolean
         required: true
         default: false
+        LDCHECK:
+        description: Check blobs
+        required: true
+        default: 'system/bin/qseecomd'
+      
 
 jobs:
   build:
@@ -266,3 +271,13 @@ jobs:
           Target: ${{ inputs.BUILD_TARGET }}.img
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checking For Missing Dependencies
+      run: |
+        cd tools
+        mv -n libneeds ${GITHUB_WORKSPACE}/workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery/root/
+        mv -n ldcheck ${GITHUB_WORKSPACE}/workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery/root/
+        cd ../workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery/root
+        python3 ldcheck -p system/lib64:vendor/lib64:system/lib:vendor/lib -d ${{ github.event.inputs.LDCHECK }}
+        echo "Done checking missing dependencies. Review, and reconfigure your tree."
+      continue-on-error: true
