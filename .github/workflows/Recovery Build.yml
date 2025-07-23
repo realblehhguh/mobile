@@ -50,9 +50,9 @@ on:
         required: true
         default: false
         LDCHECK:
-        description: Check blobs
-        required: true
-        default: 'system/bin/qseecomd'
+         description: Check blobs
+         required: true
+         default: 'system/bin/qseecomd'
       
 
 jobs:
